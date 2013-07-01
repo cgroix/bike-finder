@@ -1,0 +1,90 @@
+html, body, #container {
+	height:99%;
+	background: orange;
+}
+#map { 
+	position: relative; 
+	height: 100%;
+	width: 100%;
+	background: white; 
+}
+
+#container {
+	background: white;
+}
+
+.icon {
+	background-color: white;
+	border-radius: 15px;
+	text-align: center;
+	vertical-align: middle;
+	height: 30px;
+	width: 30px;
+}
+
+.icon.full {
+	background-color: red;
+}
+
+.icon.almostFull {
+	background-color: #cb6d51; 
+}
+
+.icon.ok {
+	background-color: green;
+}
+
+.icon.almostEmpty {
+	background-color: orange;
+}
+
+.icon.empty {
+	background-color: yellow;
+}
+
+.icon p.text {
+	margin-top:6px;
+	font-size: 8pt;
+	color:black;
+}
+
+div.buttons {
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    border:solid;
+    border-width: 1px;
+}
+
+div.buttons .controlIcon {
+	text-align: center;
+	font-size: 	32pt;
+	margin: 4px;
+}
+
+#data {
+	margin-bottom: 20px;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    border:solid;
+    border-width: 1px;
+}
+
+#data .pData {
+	font-size: 	12pt;
+}
+
+.geoloc {
+	background-color: blue;
+	border-radius: 10px;
+}
+
+
+
+
+
+
+
+
+

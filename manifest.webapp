@@ -1,0 +1,21 @@
+{
+  "name": "Bike Locator",
+  "description": "My elevator pitch goes here",
+  "launch_path": "/bikeSharing.html",
+  "developer": {
+    "name": "Corentin Groix",
+    "url": "http://corentin.groix.me"
+  },
+  "default_locale": "en",
+  "permissions": {
+    "systemXHR": {
+      "description": "Required to get bike availability"
+    },
+    "geolocation": {
+      "description": "Required to geolocalisation feature"
+    }
+  },
+  "type": "privileged",
+  "orientation": ["portrait","landscape"]
+
+}
