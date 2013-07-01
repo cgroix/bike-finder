@@ -1,4 +1,4 @@
-var data = data || {}
+var data = data || {};
 
 data.Nantes = [
   {

@@ -1,8 +1,38 @@
-var setting = {
-        city:       "Nantes",
-        key:        "502a8edad6c6e65044cce9e471d1ae452695c1e8",
-        baseWS:     "https://api.jcdecaux.com/vls/v1/"
+var settings;
+
+try {
+    localStorage;
+    settings = localStorage.settings ? JSON.parse(localStorage.settings) : {};
+    //default values:
+    settings.ls = true;
+    settings.city           = settings.city || "Nantes";
+    settings.startPosition  = settings.startPosition ||  [47.2, -1.55];
+    settings.key            = settings.key ||  "502a8edad6c6e65044cce9e471d1ae452695c1e8";
+    settings.baseWS         = settings.baseWS ||  "https://api.jcdecaux.com/vls/v1/";
+
+    localStorage.settings   = JSON.stringify(settings);
+} catch (pokemon) {
+    console.log('Error in localStorage: ' + pokemon);
+    ls = false;
+    settings = {
+        ls              : false,
+        city            : "Paris",
+        startPosition   : [48.85, 2.35],
+        key             : "502a8edad6c6e65044cce9e471d1ae452695c1e8",
+        baseWS          : "https://api.jcdecaux.com/vls/v1/"
     };
+}
+
+settings.setCity = function (city) {
+    if (settings.city !== city) {
+        settings.city = city;
+        if (settings.ls) {
+            localStorage.settings   = JSON.stringify(settings);
+        }
+        window.location.reload();
+    }
+}
+
 
 var data = {
     stations    : [],
@@ -105,7 +135,7 @@ var createStation = function (data) {
 
     //working:
     marker.on('click', printInfo);
-    var url = "https://api.jcdecaux.com/vls/v1/stations/" + number + "?&apiKey=502a8edad6c6e65044cce9e471d1ae452695c1e8&contract=Nantes";
+    var url = "https://api.jcdecaux.com/vls/v1/stations/" + number + "?&apiKey=502a8edad6c6e65044cce9e471d1ae452695c1e8&contract="+settings.city;
     updateIcon();
 
     //public interfae:
@@ -155,8 +185,16 @@ var geoloc = function () {
     }
 };
 
+var displaySettings = function() {
+    var container = document.getElementById('settings');
+    if (container.classList.contains('hidden')) {
+        container.classList.remove('hidden');
+    } else {
+        container.classList.add('hidden');
+    }
+}
+
 function placeMarkersInBounds() {
-    console.log('place')
     var i;
     var mapBounds = data.map.getBounds();
     for (i = 0; i < data.stations.length; i++) {
@@ -178,7 +216,7 @@ var onLoad = function () {
 
     data.map = new L.Map('map');
     data.map.addLayer(tilesLayer);
-    data.map.setView(new L.LatLng(47.2, -1.55), 15);
+    data.map.setView(settings.startPosition, 15);
 
     //setting position marker
     data.geolocMarker = L.marker(
@@ -196,8 +234,8 @@ var onLoad = function () {
 
     //setting stations marker and data
     var i;
-    for (i in data.Nantes) {
-        var station = createStation(data.Nantes[i]);
+    for (i in data[settings.city]) {
+        var station = createStation(data[settings.city][i]);
         station.addTo(data.map);
         data.stations.push(station);
     }
@@ -207,7 +245,7 @@ var onLoad = function () {
 
     control.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'buttons');
-        div.appendChild(addMyIcon('icon-cog', ""));
+        div.appendChild(addMyIcon('icon-cog', "displaySettings()"));
         div.appendChild(addMyIcon('icon-repeat', "window.location.reload()"));
         if (navigator.geolocation !== 'undefined') {
             div.appendChild(addMyIcon('icon-map-marker', 'geoloc()'));
