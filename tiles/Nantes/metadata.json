@@ -1,0 +1,10 @@
+{
+    "attribution": "Data \u00a9 OpenStreetMap (and) contributors, CC-BY-SA", 
+    "name": "Nantes", 
+    "bounds": "-1.593,47.1837,-1.5128,47.2512", 
+    "minzoom": "12", 
+    "version": "1.0.0", 
+    "template": "", 
+    "maxzoom": "16", 
+    "description": ""
+}

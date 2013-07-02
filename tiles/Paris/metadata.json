@@ -1,0 +1,10 @@
+{
+    "attribution": "Data \u00a9 OpenStreetMap (and) contributors, CC-BY-SA", 
+    "name": "Paris", 
+    "bounds": "2.2177,48.802,2.4381,48.921", 
+    "minzoom": "12", 
+    "version": "1.0.0", 
+    "template": "", 
+    "maxzoom": "16", 
+    "description": ""
+}
