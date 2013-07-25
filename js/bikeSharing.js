@@ -4,18 +4,21 @@ try {
     localStorage;
     settings = localStorage.settings ? JSON.parse(localStorage.settings) : {};
     //default values:
-    settings.ls = true;
+    settings.ls             = true;
+    settings.canvas         = false;
+    settings.maxMarker      = 300;
     settings.city           = settings.city || "Nantes";
     settings.startPosition  = settings.startPosition ||  [47.2, -1.55];
     settings.key            = settings.key ||  "502a8edad6c6e65044cce9e471d1ae452695c1e8";
     settings.baseWS         = settings.baseWS ||  "https://api.jcdecaux.com/vls/v1/";
 
     localStorage.settings   = JSON.stringify(settings);
-} catch (pokemon) {
-    console.log('Error in localStorage: ' + pokemon);
+} catch (charizard) {
+    console.log('Error in localStorage: ' + charizard);
     ls = false;
     settings = {
         ls              : false,
+        canvas          : false,
         city            : "Paris",
         startPosition   : [48.85, 2.35],
         key             : "502a8edad6c6e65044cce9e471d1ae452695c1e8",
@@ -26,15 +29,19 @@ try {
 settings.setCity = function (city) {
     if (settings.city !== city) {
         settings.city = city;
+        settings.startPosition = data.centers[city];
         if (settings.ls) {
             localStorage.settings   = JSON.stringify(settings);
         }
         window.location.reload();
     }
-}
+};
 
+//Global
+var group;
 
 var data = {
+    markerCount : 0,
     stations    : [],
     position    : null,
     geoloc      : false,
@@ -61,96 +68,102 @@ var xhr = function (url, callback) {
     xhr.send();
 };
 
-var createStation = function (data) {
+var Station = function (data) {
 
-    var that;
+    this.lastUpdated = data.last_update || 0;
+    this.number = data.number;
+    this.name = data.name.replace(/^[0-9]* ?\- ?/, "").toLowerCase().capitalize();
+    this.address = data.address;
+    if (data.position) {
+        this.longitude = data.position.lng;
+        this.latitude = data.position.lat;
+    } else  {
+        this.longitude = data.longitude;
+        this.latitude = data.latitude;
+    }
+    this.status = data.status || null;
+    this.available_bikes = data.available_bikes || null;
+    this.available_bike_stands = data.available_bike_stands || null;
 
-    //private variables
-    var lastUpdated = 0;
-    var number = data.number;
-    var name = data.name.replace(/^[0-9]* ?\- ?/, "").toLowerCase().capitalize();
-    var address = data.address;
-    var longitude = data.longitude;
-    var latitude = data.latitude;
-    var status = null;
-    var available_bikes = null;
-    var available_bike_stands = null;
-    var availability = 'unknown';
+    this.availability = "ok";
+    if (status !== "OPEN") {
+        this.availability = "ko";
+    } else if (available_bikes === 0) {
+        this.availability = "empty";
+    } else if (available_bikes < 3) {
+        this.availability = "almostEmpty";
+    } else if (available_bike_stands === 0) {
+        this.availability = "full";
+    } else if (available_bike_stands < 3) {
+        this.availability = "almostFull";
+    }
 
-    var marker = L.marker(
-            [latitude, longitude],
-            {title:  name }
-        );
+    this.container = null;
+    this.marker;
 
-
-    //private function
-    var updateIcon = function () {
-        var newIcon = L.divIcon(
-            {
-                className:  'icon ' + availability,
-                iconSize:   null,
-                html:       "<p class=\"text\">" + (lastUpdated ? (available_bikes + '-' + available_bike_stands) : number) + "</p>"
-            }
-        );
-        marker.setIcon(newIcon);
-    };
-    var printInfo = function (info) {
-        var container = document.getElementById("pData");
-        container.textContent = name;
-        if (lastUpdated) {
-            container.textContent += ": " + available_bikes + " bikes, " + available_bike_stands + " stands.";
-        }
-    };
-    var getInfoCB = function (e) {
-        if (this.readyState === 4) {
-            if (this.status === 200) {
-                var data = JSON.parse(this.responseText);
-                if (data) {
-                    lastUpdated = Date.now();
-                    status = data.status;
-                    available_bikes = data.available_bikes;
-                    available_bike_stands = data.available_bike_stands;
-                    availability = "ok";
-                    if (status !== "OPEN") {
-                        availability = "ko";
-                    } else if (available_bikes === 0) {
-                        availability = "empty";
-                    } else if (available_bikes < 3) {
-                        availability = "almostEmpty";
-                    } else if (available_bike_stands === 0) {
-                        availability = "full";
-                    } else if (available_bike_stands < 3) {
-                        availability = "almostFull";
-                    }
-                } else {
-                    console.log("Error in API response: url =" + ", response = " + this.responseText);
-                }
-            } else {
-                console.log("Error in connection to API: url =" + ", XHR state = " +  this.readyState + ", HTTP status = " + this.status);
-            }
-            console.log(availability);
-            updateIcon();
-        }
-    };
-
-    //working:
-    marker.on('click', printInfo);
-    var url = "https://api.jcdecaux.com/vls/v1/stations/" + number + "?&apiKey=502a8edad6c6e65044cce9e471d1ae452695c1e8&contract="+settings.city;
-    updateIcon();
-
-    //public interfae:
-    that = {
-        name        : name,
-        status      : status,
-        addTo       : function (map) {marker.addTo(map); },
-        removeTo    : function (map) {map.removeLayer(marker); },
-        getLatLng   : function () {return marker.getLatLng(); },
-        updateInfo  : function () {if (lastUpdated === 0) {xhr(url, getInfoCB); } }
-    };
-
-    return that;
-
+    this.updateIcon();
+    this.marker.on('click', this.printInfo);
 };
+
+Station.prototype.color = {
+    ok          : 'green',
+    ko          : 'black',
+    empty       : 'yellow',
+    almostEmpty : 'orange',
+    full        : 'red',
+    almostFull  : '#cb6d51'
+};
+
+Station.prototype.getColor = function () {
+    return this.color[this.availability];
+}
+
+Station.prototype.getLatLng = function () {
+    return new L.LatLng(this.latitude,this.longitude);
+};
+
+Station.prototype.isDisplayed = function () {
+    return (this.container != null);
+};
+
+Station.prototype.addTo = function (container) {
+    this.container = container;
+    this.marker.addTo(this.container);
+};
+
+Station.prototype.remove = function () {
+    if (this.container) {
+        this.container.removeLayer(this.marker);
+        this.container = null;
+    }
+};
+
+Station.prototype.updateIcon = function () {
+    if (settings.canvas) {
+        this.marker = new L.CircleMarker([latitude, longitude], {color:this.getColor()});
+        if (this.container) {
+            this.marker.addTo(this.container);
+        }
+    } else {
+        var markerIcon = L.divIcon(
+            {
+                className:  'icon ' + this.availability,
+                iconSize:   null,
+                html:       "<p class=\"text\">" + (this.lastUpdated ? ( (this.available_bikes || '') + '-' + (this.available_bike_stands || '') ) : this.number) + "</p>"
+            }
+        );
+        this.marker = new L.marker([this.latitude, this.longitude],{icon: markerIcon, opacity: 0.8});
+    }
+};
+
+Station.prototype.printInfo = function (info) {
+    var container = document.getElementById("pData");
+    container.textContent = name;
+    if (this.lastUpdated) {
+        container.textContent += ": " + this.available_bikes + " bikes, " + this.available_bike_stands + " stands.";
+    }
+};
+
 
 
 
@@ -195,23 +208,48 @@ var displaySettings = function() {
 }
 
 function placeMarkersInBounds() {
-    var i;
     var mapBounds = data.map.getBounds();
-    for (i = 0; i < data.stations.length; i++) {
+    for (var i = 0; i < data.stations.length; i++) {
         var m = data.stations[i];
         if (mapBounds.contains(m.getLatLng())) {
-            m.updateInfo();
-            m.addTo(data.map);
-        } else {
-            m.removeTo(data.map);
+            if (!m.isDisplayed() && (settings.maxMarker <= 0 || data.markerCount < settings.maxMarker)) {
+                m.addTo(data.map);
+                data.markerCount++;
+            }
+        } else if (m.isDisplayed()) {
+            m.remove();
+            data.markerCount--;
         }
+    }
+}
+
+var getAllStationDataCB = function (city) {
+    if (this.readyState === 4) {
+        if (this.status === 200) {
+        var completeData = JSON.parse(this.responseText);
+            if (completeData) {
+                for (i in completeData) {
+                    console.log(completeData[i].name);
+                    var station = new Station(completeData[i]);;
+                    data.stations.push(station);
+                }
+            } else {
+                console.log("Error in API response: url =" + ", response = " + this.responseText);
+            }
+        } else {
+            for (i in data[settings.city]) {
+                var station = new Station(data[settings.city][i]);
+                data.stations.push(station);
+            }       
+        }
+    placeMarkersInBounds();
     }
 }
 
 var onLoad = function () {
 
     //setting map background
-    var tilesUrl = 'tiles/nantes/{z}/{x}/{y}.png';
+    var tilesUrl = 'tiles/' +  settings.city + '/{z}/{x}/{y}.png';
     var tilesLayer = new L.TileLayer(tilesUrl, {minZoom: 12, maxZoom: 16, attribution: "Data \u00a9 OSM ctrbs, ODL"});
 
     data.map = new L.Map('map');
@@ -233,12 +271,8 @@ var onLoad = function () {
 
 
     //setting stations marker and data
-    var i;
-    for (i in data[settings.city]) {
-        var station = createStation(data[settings.city][i]);
-        station.addTo(data.map);
-        data.stations.push(station);
-    }
+    var url = "https://api.jcdecaux.com/vls/v1/stations?&apiKey=" + settings.key + "&contract=" + settings.city;
+    xhr(url, getAllStationDataCB);
 
     //setting controls
     var control = L.control({position: 'topright'});
@@ -268,5 +302,13 @@ var onLoad = function () {
     info.addTo(data.map);
     control.addTo(data.map);
     data.map.on('moveend', placeMarkersInBounds);
-    placeMarkersInBounds();
+
+    //setting settings selector
+    var selector = document.getElementById("selectCity");
+    for (var i = 0; i < selector.length;i++) {
+        if (selector.options[i].value === settings.city) {
+            selector.selectedIndex = i;
+            break;
+        }
+    }
 };

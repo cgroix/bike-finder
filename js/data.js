@@ -1,5 +1,10 @@
 var data = data || {};
 
+data.centers = {
+    Nantes      : [47.2, -1.55],
+    Paris       : [48.85, 2.35]
+}
+
 data.Nantes = [
   {
     "number": 38,

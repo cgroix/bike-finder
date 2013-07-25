@@ -1,52 +1,80 @@
-html, body, #container {
-	height:99%;
-	background: orange;
-}
-#map { 
-	position: relative; 
-	height: 100%;
-	width: 100%;
-	background: white; 
+.html .body {
+  background:#C45810;
 }
 
 #container {
-	background: white;
+  position: absolute;
+	height:100%;
+  width:100%;
+}
+#map { 
+    height: 100%;
 }
 
-.icon {
-	background-color: white;
-	border-radius: 15px;
+#container {
+}
+
+#settings {
+  position:relative;
+  float: right;
+  width: 40%;
+  background: #3B3235;
+  height:100%;
+  color:#C45810;
+  font-size: 24pt;
+}
+
+#settings .cities {
+  margin: 40px;
+}
+
+#settings .cities #selectCity {
+    width:80%;
+    font-size: 24pt;
+}
+
+#settings .website {
+  position:absolute;
+  bottom:0;
 	text-align: center;
-	vertical-align: middle;
-	height: 30px;
-	width: 30px;
+}
+
+
+.icon {
+       background-color: white;
+       border-radius: 15px;
+       text-align: center;
+       vertical-align: middle;
+       height: 30px;
+       width: 30px;
 }
 
 .icon.full {
-	background-color: red;
+       background-color: red;
 }
 
 .icon.almostFull {
-	background-color: #cb6d51; 
+       background-color: #cb6d51; 
 }
 
 .icon.ok {
-	background-color: green;
+       background-color: green;
 }
 
 .icon.almostEmpty {
-	background-color: orange;
+       background-color: orange;
 }
 
 .icon.empty {
-	background-color: yellow;
+       background-color: yellow;
 }
 
 .icon p.text {
-	margin-top:6px;
-	font-size: 8pt;
-	color:black;
-}
+       margin-top:6px;
+       font-size: 8pt;
+       color:black;
+     }
+
 
 div.buttons {
     background: rgba(255,255,255,0.8);
@@ -67,17 +95,25 @@ div.buttons .controlIcon {
     background: rgba(255,255,255,0.8);
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
-    border:solid;
-    border-width: 1px;
 }
 
-#data .pData {
+#data #pData {
 	font-size: 	12pt;
 }
+
+
 
 .geoloc {
 	background-color: blue;
 	border-radius: 10px;
+}
+
+.hidden {
+	display:none;
+}
+
+#cities {
+  width:80%;
 }
 
 

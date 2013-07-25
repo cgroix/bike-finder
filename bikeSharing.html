@@ -2,17 +2,32 @@
 <html>
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-		<title>Bicloo</title>
+		<title>Bike Sharing</title>
 		<link rel="stylesheet" href="lib/leaflet/leaflet.css" />
 		<link rel="stylesheet" href="lib/font-awesome/font-awesome.min.css">
 	 	<link rel="stylesheet" href="css/bikeSharing.css" />
+	 	<script>L_PREFER_CANVAS = true;</script>
 		<script src="lib/leaflet/leaflet.js"></script>
  		<script src="js/bikeSharing.js"></script>
  		<script src="js/data.js"></script>
+ 		<script src="js/Paris.json"></script>
+
 
 	</head>
 	<body onLoad="onLoad()">
 		<div id="container">
+			<div id = "settings" class = "">
+			    <div class = "cities">
+					<p>Choose your City:</p>
+            	    <select id = "selectCity" onchange="settings.setCity(options[selectedIndex].innerHTML);">
+                	    <option value="Paris">Paris</option>
+                	    <option value="Nantes">Nantes</option>
+            	    </select>		
+        	    </div>
+        	    <div class = "website">
+             		<p>Contribute to the project at <a href="http://github.com">github.com</a>
+            	</div>
+            </div>
 		 	<div id="map"></div>
 		</div>
 	</body>
