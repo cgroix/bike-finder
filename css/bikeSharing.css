@@ -21,7 +21,7 @@
   background: #3B3235;
   height:100%;
   color:#C45810;
-  font-size: 24pt;
+  font-size: 12pt;
 }
 
 #settings .cities {
@@ -30,7 +30,7 @@
 
 #settings .cities #selectCity {
     width:80%;
-    font-size: 24pt;
+    font-size: 12pt;
 }
 
 #settings .website {
@@ -47,6 +47,10 @@
        vertical-align: middle;
        height: 30px;
        width: 30px;
+}
+
+.icon.ko {
+    background-color: grey;
 }
 
 .icon.full {

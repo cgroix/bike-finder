@@ -16,7 +16,7 @@
 	</head>
 	<body onLoad="onLoad()">
 		<div id="container">
-			<div id = "settings" class = "">
+			<div id = "settings" class = "hidden">
 			    <div class = "cities">
 					<p>Choose your City:</p>
             	    <select id = "selectCity" onchange="settings.setCity(options[selectedIndex].innerHTML);">
@@ -24,6 +24,13 @@
                 	    <option value="Nantes">Nantes</option>
             	    </select>		
         	    </div>
+        	    <div class = "canvas">
+        	    	Canvas: <input type="checkbox" name="canvas" value="false"/>
+        	    </div>
+        	    <div class = "canvas">
+        	    	Max point: <input type="number" name="maxpoint" value="200"/>
+        	    </div>
+
         	    <div class = "website">
              		<p>Contribute to the project at <a href="http://github.com">github.com</a>
             	</div>

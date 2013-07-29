@@ -6,7 +6,7 @@ try {
     //default values:
     settings.ls             = true;
     settings.canvas         = false;
-    settings.maxMarker      = 300;
+    settings.maxMarker      = 200;
     settings.city           = settings.city || "Nantes";
     settings.startPosition  = settings.startPosition ||  [47.2, -1.55];
     settings.key            = settings.key ||  "502a8edad6c6e65044cce9e471d1ae452695c1e8";
@@ -86,15 +86,15 @@ var Station = function (data) {
     this.available_bike_stands = data.available_bike_stands || null;
 
     this.availability = "ok";
-    if (status !== "OPEN") {
+    if (this.status !== "OPEN") {
         this.availability = "ko";
-    } else if (available_bikes === 0) {
+    } else if (this.available_bikes === 0) {
         this.availability = "empty";
-    } else if (available_bikes < 3) {
+    } else if (this.available_bikes < 3) {
         this.availability = "almostEmpty";
-    } else if (available_bike_stands === 0) {
+    } else if (this.available_bike_stands === 0) {
         this.availability = "full";
-    } else if (available_bike_stands < 3) {
+    } else if (this.available_bike_stands < 3) {
         this.availability = "almostFull";
     }
 
@@ -102,7 +102,14 @@ var Station = function (data) {
     this.marker;
 
     this.updateIcon();
-    this.marker.on('click', this.printInfo);
+    var that = this;
+    this.marker.on('click', function () {
+        var container = document.getElementById("pData");
+        container.textContent = that.name;
+        if (that.lastUpdated) {
+            container.textContent += ": " + (that.available_bikes || '0') + " bikes, " + (that.available_bike_stands || '0') + " stands.";
+        }
+    });
 };
 
 Station.prototype.color = {
@@ -149,16 +156,16 @@ Station.prototype.updateIcon = function () {
             {
                 className:  'icon ' + this.availability,
                 iconSize:   null,
-                html:       "<p class=\"text\">" + (this.lastUpdated ? ( (this.available_bikes || '') + '-' + (this.available_bike_stands || '') ) : this.number) + "</p>"
+                html:       "<p class=\"text\">" + (this.lastUpdated ? ( (this.available_bikes || '0') + '-' + (this.available_bike_stands || '0') ) : this.number) + "</p>"
             }
         );
         this.marker = new L.marker([this.latitude, this.longitude],{icon: markerIcon, opacity: 0.8});
     }
 };
 
-Station.prototype.printInfo = function (info) {
+Station.prototype.printInfo = function () {
     var container = document.getElementById("pData");
-    container.textContent = name;
+    container.textContent = this.name;
     if (this.lastUpdated) {
         container.textContent += ": " + this.available_bikes + " bikes, " + this.available_bike_stands + " stands.";
     }
@@ -271,7 +278,7 @@ var onLoad = function () {
 
 
     //setting stations marker and data
-    var url = "https://api.jcdecaux.com/vls/v1/stations?&apiKey=" + settings.key + "&contract=" + settings.city;
+    var url = settings.baseWS + "stations?&apiKey=" + settings.key + "&contract=" + settings.city;
     xhr(url, getAllStationDataCB);
 
     //setting controls
@@ -294,7 +301,6 @@ var onLoad = function () {
         div.id  = 'data';
         var pdata   = document.createElement('p');
         pdata.id = 'pData';
-
         div.appendChild(pdata);
         return div;
     };
