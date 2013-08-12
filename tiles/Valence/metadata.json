@@ -1,0 +1,10 @@
+{
+    "attribution": "Data \u00a9 OpenStreetMap (and) contributors, CC-BY-SA", 
+    "name": "Bicloo-Spain", 
+    "bounds": "-0.4309,39.4375,-0.3207,39.5088", 
+    "minzoom": "12", 
+    "version": "1.0.0", 
+    "template": "", 
+    "maxzoom": "16", 
+    "description": ""
+}
