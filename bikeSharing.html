@@ -11,7 +11,7 @@
  		<script src="js/bikeSharing.js"></script>
  		<script src="js/data.js"></script>
  		<script src="js/Paris.json"></script>
-
+ 		<script src="js/Valence.json"></script>
 
 	</head>
 	<body onLoad="onLoad()">
@@ -22,13 +22,14 @@
             	    <select id = "selectCity" onchange="settings.setCity(options[selectedIndex].innerHTML);">
                 	    <option value="Paris">Paris</option>
                 	    <option value="Nantes">Nantes</option>
+                	    <option value="Valence">Valence</option>
             	    </select>		
         	    </div>
         	    <div class = "canvas">
-        	    	Canvas: <input type="checkbox" name="canvas" value="false"/>
+        	    	Canvas: <input type="checkbox" id="canvas" name="canvas" value="canvas" checked="false" onchange="console.log(this.checked);settings.setCanvas(this.checked);"/>
         	    </div>
         	    <div class = "canvas">
-        	    	Max point: <input type="number" name="maxpoint" value="200"/>
+        	    	Max point: <input type="number" id="maxpoint" name="maxpoint" value="200" onchange="settings.setMaxPoints(this.value);"/>
         	    </div>
 
         	    <div class = "website">

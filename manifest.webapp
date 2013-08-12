@@ -1,6 +1,6 @@
 {
   "name": "Bike Locator",
-  "description": "My elevator pitch goes here",
+  "description": "Find your bike and your way without overrunnig your data plan! This app embed its map and data to be used in in offline mode, displaying a cty map and station location, but can also disply bike availabilty if you have connectivity. Oh, and it features geolocation too.",
   "launch_path": "/bikeSharing.html",
   "developer": {
     "name": "Corentin Groix",
@@ -16,6 +16,8 @@
     }
   },
   "type": "privileged",
-  "orientation": ["portrait","landscape"]
-
+  "orientation": [
+    "portrait",
+    "landscape"
+  ]
 }

@@ -5,8 +5,8 @@ try {
     settings = localStorage.settings ? JSON.parse(localStorage.settings) : {};
     //default values:
     settings.ls             = true;
-    settings.canvas         = false;
-    settings.maxMarker      = 200;
+    settings.canvas         = settings.canvas || false;
+    settings.maxMarker      = settings.maxMarker || 200;
     settings.city           = settings.city || "Nantes";
     settings.startPosition  = settings.startPosition ||  [47.2, -1.55];
     settings.key            = settings.key ||  "502a8edad6c6e65044cce9e471d1ae452695c1e8";
@@ -19,6 +19,7 @@ try {
     settings = {
         ls              : false,
         canvas          : false,
+        maxMarker       : 200,
         city            : "Paris",
         startPosition   : [48.85, 2.35],
         key             : "502a8edad6c6e65044cce9e471d1ae452695c1e8",
@@ -33,13 +34,33 @@ settings.setCity = function (city) {
         if (settings.ls) {
             localStorage.settings   = JSON.stringify(settings);
         }
+        //Persistance won't works if localsotrage is not enabled
         window.location.reload();
     }
 };
 
-//Global
-var group;
 
+settings.setMaxPoints = function (nbPoints) {
+    var max = parseInt(nbPoints);
+    if (typeof max === "number" && max > 0) {
+        settings.maxMarker = max;
+        if (settings.ls) {
+            localStorage.settings = JSON.stringify(settings);
+        }
+        placeMarkersInBounds();
+    }
+};
+
+settings.setCanvas = function (canvas) {
+        settings.canvas = (canvas == true);
+        if (settings.ls) {
+            localStorage.settings = JSON.stringify(settings);
+        }
+        window.location.reload();
+};
+
+
+//Global
 var data = {
     markerCount : 0,
     stations    : [],
@@ -72,12 +93,12 @@ var Station = function (data) {
 
     this.lastUpdated = data.last_update || 0;
     this.number = data.number;
-    this.name = data.name.replace(/^[0-9]* ?\- ?/, "").toLowerCase().capitalize();
+    this.name = data.name.replace(/^[0-9]* ?[_\-] ?/, "").replace(/_/g," ").toLowerCase().capitalize();
     this.address = data.address;
     if (data.position) {
         this.longitude = data.position.lng;
         this.latitude = data.position.lat;
-    } else  {
+    } else  {http://commons.wikimedia.org/wiki/File:France_relief_location_map.jpg
         this.longitude = data.longitude;
         this.latitude = data.latitude;
     }
@@ -147,9 +168,9 @@ Station.prototype.remove = function () {
 
 Station.prototype.updateIcon = function () {
     if (settings.canvas) {
-        this.marker = new L.CircleMarker([latitude, longitude], {color:this.getColor()});
-        if (this.container) {
-            this.marker.addTo(this.container);
+        this.marker = new L.CircleMarker([this.latitude, this.longitude], {color:this.getColor()});
+        if (data.map) {
+            this.marker.addTo(data.map);
         }
     } else {
         var markerIcon = L.divIcon(
@@ -214,20 +235,28 @@ var displaySettings = function() {
     }
 }
 
-function placeMarkersInBounds() {
+function onMoveEnd() {
+    if (settings.canvas) {
+        //noop
+    } else {
+        //Place marker in viewport
     var mapBounds = data.map.getBounds();
-    for (var i = 0; i < data.stations.length; i++) {
-        var m = data.stations[i];
-        if (mapBounds.contains(m.getLatLng())) {
-            if (!m.isDisplayed() && (settings.maxMarker <= 0 || data.markerCount < settings.maxMarker)) {
-                m.addTo(data.map);
-                data.markerCount++;
+        for (var i = 0; i < data.stations.length; i++) {
+            var m = data.stations[i];
+            if (mapBounds.contains(m.getLatLng())) {
+                if (!m.isDisplayed() && (settings.maxMarker <= 0 || data.markerCount < settings.maxMarker)) {
+                    m.addTo(data.map);
+                    data.markerCount++;
+                }
+            } else if (m.isDisplayed()) {
+                m.remove();
+                data.markerCount--;
             }
-        } else if (m.isDisplayed()) {
-            m.remove();
-            data.markerCount--;
         }
     }
+
+    //store position
+    settings.startPosition = [data.map.getCenter().lat, data.map.getCenter().lng]
 }
 
 var getAllStationDataCB = function (city) {
@@ -249,7 +278,7 @@ var getAllStationDataCB = function (city) {
                 data.stations.push(station);
             }       
         }
-    placeMarkersInBounds();
+    onMoveEnd();
     }
 }
 
@@ -307,9 +336,10 @@ var onLoad = function () {
 
     info.addTo(data.map);
     control.addTo(data.map);
-    data.map.on('moveend', placeMarkersInBounds);
+    data.map.on('moveend', onMoveEnd);
+    window.addEventListener('beforeunload', function () {localStorage.settings = JSON.stringify(settings); console.log(JSON.stringify(settings));}, false)
 
-    //setting settings selector
+    //setting setting panel states
     var selector = document.getElementById("selectCity");
     for (var i = 0; i < selector.length;i++) {
         if (selector.options[i].value === settings.city) {
@@ -317,4 +347,7 @@ var onLoad = function () {
             break;
         }
     }
+    var selector = document.getElementById("maxpoint").value = settings.maxMarker;
+    var selector = document.getElementById("canvas").value = settings.canvas;
+
 };
