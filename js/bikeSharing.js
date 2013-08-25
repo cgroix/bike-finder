@@ -1,4 +1,10 @@
+var data = data || {}
+
+var bikeSharing = function () {
+
 var settings;
+var interface = {};
+
 
 try {
     localStorage;
@@ -27,7 +33,7 @@ try {
     };
 }
 
-settings.setCity = function (city) {
+interface.setCity = function (city) {
     if (settings.city !== city) {
         settings.city = city;
         settings.startPosition = data.centers[city];
@@ -40,7 +46,7 @@ settings.setCity = function (city) {
 };
 
 
-settings.setMaxPoints = function (nbPoints) {
+interface.setMaxPoints = function (nbPoints) {
     var max = parseInt(nbPoints);
     if (typeof max === "number" && max > 0) {
         settings.maxMarker = max;
@@ -51,7 +57,7 @@ settings.setMaxPoints = function (nbPoints) {
     }
 };
 
-settings.setCanvas = function (canvas) {
+interface.setCanvas = function (canvas) {
         settings.canvas = (canvas == true);
         if (settings.ls) {
             localStorage.settings = JSON.stringify(settings);
@@ -60,8 +66,7 @@ settings.setCanvas = function (canvas) {
 };
 
 
-//Global
-var data = {
+var content = {
     markerCount : 0,
     stations    : [],
     position    : null,
@@ -169,8 +174,8 @@ Station.prototype.remove = function () {
 Station.prototype.updateIcon = function () {
     if (settings.canvas) {
         this.marker = new L.CircleMarker([this.latitude, this.longitude], {color:this.getColor()});
-        if (data.map) {
-            this.marker.addTo(data.map);
+        if (content.map) {
+            this.marker.addTo(content.map);
         }
     } else {
         var markerIcon = L.divIcon(
@@ -195,10 +200,10 @@ Station.prototype.printInfo = function () {
 
 
 
-var addMyIcon = function (icone, fonction) {
+var addMyIcon = function (icone, action) {
     var div = document.createElement('div');
     div.classList.add('controlIcon');
-    div.setAttribute("onClick", fonction);
+    div.addEventListener("click", action)
     var font = document.createElement('i');
     font.classList.add(icone);
     div.appendChild(font);
@@ -207,22 +212,22 @@ var addMyIcon = function (icone, fonction) {
 
 var geoloc = function () {
     var position = function (position) {
-        data.geolocMarker.setLatLng([position.coords.latitude, position.coords.longitude]);
-        data.geolocMarker.addTo(data.map);
-        data.geolocMarker.update();
-        data.map.setView([position.coords.latitude, position.coords.longitude], 16);
+        content.geolocMarker.setLatLng([position.coords.latitude, position.coords.longitude]);
+        content.geolocMarker.addTo(content.map);
+        content.geolocMarker.update();
+        content.map.setView([position.coords.latitude, position.coords.longitude], 16);
     };
 
-    if (data.geoloc) {
-        data.geolocMarker.setLatLng([0, 0]);
-        data.geolocMarker.update();
-        data.geoloc = false;
-        data.geolocMarker.addTo(data.map);
-        navigator.geolocation.clearWatch(data.geolocId);
+    if (content.geoloc) {
+        content.geolocMarker.setLatLng([0, 0]);
+        content.geolocMarker.update();
+        content.geoloc = false;
+        content.geolocMarker.addTo(content.map);
+        navigator.geolocation.clearWatch(content.geolocId);
     } else {
-        data.geoloc = true;
+        content.geoloc = true;
         window.navigator.geolocation.getCurrentPosition(position);
-        data.geolocId = window.navigator.geolocation.watchPosition(position);
+        content.geolocId = window.navigator.geolocation.watchPosition(position);
     }
 };
 
@@ -240,23 +245,23 @@ function onMoveEnd() {
         //noop
     } else {
         //Place marker in viewport
-    var mapBounds = data.map.getBounds();
-        for (var i = 0; i < data.stations.length; i++) {
-            var m = data.stations[i];
+    var mapBounds = content.map.getBounds();
+        for (var i = 0; i < content.stations.length; i++) {
+            var m = content.stations[i];
             if (mapBounds.contains(m.getLatLng())) {
-                if (!m.isDisplayed() && (settings.maxMarker <= 0 || data.markerCount < settings.maxMarker)) {
-                    m.addTo(data.map);
-                    data.markerCount++;
+                if (!m.isDisplayed() && (settings.maxMarker <= 0 || content.markerCount < settings.maxMarker)) {
+                    m.addTo(content.map);
+                    content.markerCount++;
                 }
             } else if (m.isDisplayed()) {
                 m.remove();
-                data.markerCount--;
+                content.markerCount--;
             }
         }
     }
 
     //store position
-    settings.startPosition = [data.map.getCenter().lat, data.map.getCenter().lng]
+    settings.startPosition = [content.map.getCenter().lat, content.map.getCenter().lng]
 }
 
 var getAllStationDataCB = function (city) {
@@ -267,7 +272,7 @@ var getAllStationDataCB = function (city) {
                 for (i in completeData) {
                     console.log(completeData[i].name);
                     var station = new Station(completeData[i]);;
-                    data.stations.push(station);
+                    content.stations.push(station);
                 }
             } else {
                 console.log("Error in API response: url =" + ", response = " + this.responseText);
@@ -275,25 +280,25 @@ var getAllStationDataCB = function (city) {
         } else {
             for (i in data[settings.city]) {
                 var station = new Station(data[settings.city][i]);
-                data.stations.push(station);
+                content.stations.push(station);
             }       
         }
     onMoveEnd();
     }
 }
 
-var onLoad = function () {
+interface.onLoad = function () {
 
     //setting map background
     var tilesUrl = 'tiles/' +  settings.city + '/{z}/{x}/{y}.png';
     var tilesLayer = new L.TileLayer(tilesUrl, {minZoom: 12, maxZoom: 16, attribution: "Data \u00a9 OSM ctrbs, ODL"});
 
-    data.map = new L.Map('map');
-    data.map.addLayer(tilesLayer);
-    data.map.setView(settings.startPosition, 15);
+    content.map = new L.Map('map');
+    content.map.addLayer(tilesLayer);
+    content.map.setView(settings.startPosition, 15);
 
     //setting position marker
-    data.geolocMarker = L.marker(
+    content.geolocMarker = L.marker(
         [0, 0],
         {title:  geoloc }
     );
@@ -303,7 +308,7 @@ var onLoad = function () {
             iconSize:   [15, 15]
         }
     );
-    data.geolocMarker.setIcon(geolocIcon);
+    content.geolocMarker.setIcon(geolocIcon);
 
 
     //setting stations marker and data
@@ -315,10 +320,10 @@ var onLoad = function () {
 
     control.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'buttons');
-        div.appendChild(addMyIcon('icon-cog', "displaySettings()"));
-        div.appendChild(addMyIcon('icon-repeat', "window.location.reload()"));
+        div.appendChild(addMyIcon('icon-cog', displaySettings));
+        div.appendChild(addMyIcon('icon-repeat', window.location.reload));
         if (navigator.geolocation !== 'undefined') {
-            div.appendChild(addMyIcon('icon-map-marker', 'geoloc()'));
+            div.appendChild(addMyIcon('icon-map-marker', geoloc));
         }
         return div;
     };
@@ -334,9 +339,9 @@ var onLoad = function () {
         return div;
     };
 
-    info.addTo(data.map);
-    control.addTo(data.map);
-    data.map.on('moveend', onMoveEnd);
+    info.addTo(content.map);
+    control.addTo(content.map);
+    content.map.on('moveend', onMoveEnd);
     window.addEventListener('beforeunload', function () {localStorage.settings = JSON.stringify(settings); console.log(JSON.stringify(settings));}, false)
 
     //setting setting panel states
@@ -351,3 +356,7 @@ var onLoad = function () {
     var selector = document.getElementById("canvas").value = settings.canvas;
 
 };
+
+
+    return interface;
+}();
