@@ -1,23 +1,29 @@
 {
-  "name": "Bike Locator",
-  "description": "Find your bike and your way without overrunnig your data plan! This app embed its map and data to be used in in offline mode, displaying a cty map and station location, but can also disply bike availabilty if you have connectivity. Oh, and it features geolocation too.",
-  "launch_path": "/bikeSharing.html",
-  "developer": {
-    "name": "Corentin Groix",
-    "url": "http://corentin.groix.me"
-  },
-  "default_locale": "en",
-  "permissions": {
-    "systemXHR": {
-      "description": "Required to get bike availability"
+    "version"   :   1,
+    "name": "Bicloo",
+    "description": "Find your bike and your way without overrunnig your data plan! This app embed its map and data to be used in in offline mode, displaying a cty map and station location, but can also disply bike availabilty if you have connectivity. Oh, and it features geolocation too.",
+    "launch_path": "index.html",
+    "developer": {
+        "name": "Corentin Groix",
+        "url": "http://corentin.groix.me"
     },
-    "geolocation": {
-      "description": "Required to geolocalisation feature"
-    }
-  },
-  "type": "privileged",
-  "orientation": [
-    "portrait",
-    "landscape"
-  ]
+    "default_locale": "en-US",
+    "locales": {
+        "fr": {
+            "description": "Trouvez votre vélo."
+        },
+        "it": {
+            "description": "Encentre su bici."
+        }
+    },
+    "permissions": {
+        "systemXHR": {
+          "description": "Required to get bike availability"
+        },
+        "geolocation": {
+          "description": "Required to geolocalisation feature"
+        }
+    },
+    "type": "privileged",
+    "orientation": ["portrait", "landscape"]
 }

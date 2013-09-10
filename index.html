@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+		<title class="i18n-title">Bike Sharing</title>
+		<link rel="stylesheet" href="lib/leaflet/leaflet.css" />
+		<link rel="stylesheet" href="lib/font-awesome/font-awesome.min.css">
+	 	<link rel="stylesheet" href="css/bikeSharing.css" />
+
+	</head>
+	<body>
+		<div id="container">
+			<div id = "settings" class = "hidden">
+				<div id = "debug"></div>
+			    <div class = "cities">
+					<p class="i18n-cityChoice">Choose your City:</p>
+            	    <select id = "selectCity" onchange="bikeSharing.setCity(options[selectedIndex].innerHTML);">
+                	    <option value="Paris">Paris</option>
+                	    <option value="Nantes">Nantes</option>
+                	    <option value="Valence">Valence</option>
+            	    </select>		
+        	    </div>
+        	    <div class = "setting">
+        	    	<spanclass="i18n-settingCanvas">Canvas: </span> <input type="checkbox" id="canvas" name="canvas" value="canvas" checked="false" onchange="console.log(this.checked);bikeSharing.setCanvas(this.checked);"/>
+        	    </div>
+        	    <div class = "setting">
+        	    	<span class="i18n-settingMaxPoint">Max point: </span> <input type="number" id="maxpoint" name="maxpoint" value="200" onchange="bikeSharing.setMaxPoints(this.value);"/>
+        	    </div>
+
+        	    <div class = "website">
+             		<p><span class="i18n-contribute">Contribute to the project at</span> <a href="http://github.com">github.com</a>
+            	</div>
+            </div>
+		 	<div id="map"></div>
+		</div>
+
+
+		<script src="lib/leaflet/leaflet.js"></script>
+ 		<script src="js/data.js"></script>
+ 		<script src="js/Nantes.json"></script>
+ 		<script src="js/Paris.json"></script>
+ 		<script src="js/Valence.json"></script>
+ 		<script src="js/i18n.js"></script>
+ 		<script src="js/bikeSharing.js"></script>
+
+
+	</body>
+</html>
