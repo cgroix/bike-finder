@@ -178,26 +178,25 @@ var bikeSharing = function () {
         if (data.position) {
             this.longitude = data.position.lng;
             this.latitude = data.position.lat;
-        } else  {http://commons.wikimedia.org/wiki/File:France_relief_location_map.jpg
+        } else  {
             this.longitude = data.longitude;
             this.latitude = data.latitude;
         }
         this.status = data.status || null;
-        this.available_bikes = data.available_bikes || null;
-        this.available_bike_stands = data.available_bike_stands || null;
+        this.available_bikes = data.available_bikes || 0;
+        this.available_bike_stands = data.available_bike_stands || 0;
 
         this.availability = "ok";
-        if (this.status !== "OPEN") {
+        if (this.status !== "OPEN") 
             this.availability = "ko";
-        } else if (this.available_bikes === 0) {
+        else if (this.available_bikes === 0)
             this.availability = "empty";
-        } else if (this.available_bikes < 3) {
+        else if (this.available_bikes < 3)
             this.availability = "almostEmpty";
-        } else if (this.available_bike_stands === 0) {
+        else if (this.available_bike_stands === 0)
             this.availability = "full";
-        } else if (this.available_bike_stands < 3) {
+        else if (this.available_bike_stands < 3)
             this.availability = "almostFull";
-        }
 
         this.container = null;
         this.marker;
@@ -287,7 +286,7 @@ var bikeSharing = function () {
     };
 
     var displaySettings = function() {
-        var container = document.getElementById('settings');
+        var container = document.getElementsByClassName('settings')[0];
         if (container.classList.contains('hidden')) {
             container.classList.remove('hidden');
         } else {

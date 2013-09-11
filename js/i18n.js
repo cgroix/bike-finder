@@ -1,6 +1,10 @@
 var Locale = function (loc) {
-    var locale = loc || "en";
     var that = {};
+    var defaultLocale = "en-US";
+    var allowedLocales = ["fr", "en-US", "es"];
+
+    var locale = (allowedLocales.indexOf(loc) !== -1) ? loc : defaultLocale;
+
 
     var dic = {
         "bikes"     : {
@@ -19,23 +23,23 @@ var Locale = function (loc) {
                         "es"   : "Bicicletas compartidas"
                     },
         "cityChoice"    : {
-                        "fr"   : "Sélectionner votre ville",
-                        "en-US"   : "Choose your city",
-                        "es"   : "Elige su ciudad"
+                        "fr"   : "Sélectionner votre ville:",
+                        "en-US": "Choose your city:",
+                        "es"   : "Elige su ciudad:"
                     },
         "settingCanvas" : {
                         "fr"   : "Canvas: ",
-                        "en-US"   : "Canvas: ",
+                        "en-US": "Canvas: ",
                         "es"   : "Canvas: "
                     },
         "settingMaxPoint" : {
                         "fr"   : "Maximum de point: ",
-                        "en-US"   : "Max points: ",
-                        "es"   : "Maximum de puntos: "
+                        "en-US": "Max points: ",
+                        "es"   : "Máximo de puntos: "
                     },
         "contribute" : {
                         "fr"   : "Contribuez à ce projet sur ",
-                        "en-US"   : "Contribute to this project at ",
+                        "en-US": "Contribute to this project at ",
                         "es"   : "Contribuye a este proyecto en "
                     },
         };
@@ -52,12 +56,12 @@ var Locale = function (loc) {
     };
 
     that.setLocale = function (loc) {
-        this.locale = loc;
+        locale = allowedLocales.indexOf(loc) != -1 ? loc : defaultLocale;
     };
 
     that.getString = function(key) {
         if (dic[key]) {
-            return dic[key][locale] || "Foo";
+            return dic[key][locale] || "";
         } else {
             return "Key not found";
         }

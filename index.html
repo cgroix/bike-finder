@@ -10,21 +10,28 @@
 	</head>
 	<body>
 		<div id="container">
-			<div id = "settings" class = "hidden">
-				<div id = "debug"></div>
-			    <div class = "cities">
-					<p class="i18n-cityChoice">Choose your City:</p>
-            	    <select id = "selectCity" onchange="bikeSharing.setCity(options[selectedIndex].innerHTML);">
-                	    <option value="Paris">Paris</option>
-                	    <option value="Nantes">Nantes</option>
-                	    <option value="Valence">Valence</option>
-            	    </select>		
+			<div class = "settings hidden">
+			    <div class = "setting cities">
+					<div class="legend i18n-cityChoice">Choose your City:</div>
+	       	    	<div class="input">
+            	    	<select class='input' id = "selectCity" onchange="bikeSharing.setCity(options[selectedIndex].innerHTML);">
+	                	    <option value="Paris">Paris</option>
+	                	    <option value="Nantes">Nantes</option>
+	                	    <option value="Valence">Valence</option>
+            	    	</select>
+            	    </div>		
         	    </div>
         	    <div class = "setting">
-        	    	<spanclass="i18n-settingCanvas">Canvas: </span> <input type="checkbox" id="canvas" name="canvas" value="canvas" checked="false" onchange="console.log(this.checked);bikeSharing.setCanvas(this.checked);"/>
+        	    	<div class="legend i18n-settingCanvas">Canvas: </div> 
+	        	    <div class="input">
+        	    		<input class='input' type="checkbox" id="canvas" name="canvas" value="canvas" checked="false" onchange="console.log(this.checked);bikeSharing.setCanvas(this.checked);"/>
+        	    	</div>
         	    </div>
         	    <div class = "setting">
-        	    	<span class="i18n-settingMaxPoint">Max point: </span> <input type="number" id="maxpoint" name="maxpoint" value="200" onchange="bikeSharing.setMaxPoints(this.value);"/>
+        	    	<div class="legend i18n-settingMaxPoint">Max point: </div> 
+        	    	<div class="input">
+        	    		<input class='input' type="number" id="maxpoint" name="maxpoint" value="200" onchange="bikeSharing.setMaxPoints(this.value);"/>
+        	    	</div>
         	    </div>
 
         	    <div class = "website">
