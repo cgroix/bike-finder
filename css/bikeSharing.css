@@ -11,9 +11,6 @@
     height: 100%;
 }
 
-#container {
-}
-
 .settings {
     position:relative;
     float: right;
@@ -34,13 +31,13 @@
 }
 
 .settings .setting .legend {
-    margin-left: 2%;
-    margin-right: 2%;
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 .settings .setting .input {
-    margin-left: 2%;
-    margin-right: 2%;
+    margin-left: 5%;
+    margin-right: 5%;
     text-align: right;
 }
 
