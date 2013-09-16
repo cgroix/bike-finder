@@ -11,7 +11,6 @@ var bikeSharing = function () {
         settings = localStorage.settings ? JSON.parse(localStorage.settings) : {};
         //default values:
         settings.ls             = true;
-        settings.canvas         = settings.canvas       || false;
         settings.maxMarker      = settings.maxMarker    || 200;
         settings.city           = settings.city         || "Nantes";
         settings.startPosition  = settings.startPosition ||  [47.2, -1.55];
@@ -24,7 +23,6 @@ var bikeSharing = function () {
         ls = false;
         settings = {
             ls              : false,
-            canvas          : false,
             maxMarker       : 200,
             city            : "Paris",
             startPosition   : [48.85, 2.35],
@@ -56,14 +54,6 @@ var bikeSharing = function () {
         }
     };
 
-    interface.setCanvas = function (canvas) {
-            settings.canvas = (canvas == true);
-            if (settings.ls) {
-                localStorage.settings = JSON.stringify(settings);
-            }
-            window.location.reload();
-    };
-
     var locale = new Locale(navigator.language || "fr");
     locale.localize();
     var content = {
@@ -77,26 +67,7 @@ var bikeSharing = function () {
 
 
 
-    ///////////////////////////////////////////////
-    //              State Controllers            //
-    ///////////////////////////////////////////////
-
-
-
-    var CanvasController = {
-        updateIcon: function () {
-            this.marker = new L.CircleMarker([this.latitude, this.longitude], {color:this.getColor()});
-            if (content.map) {
-                this.marker.addTo(content.map);
-            }
-        },
-        onMoveEnd: function () {
-            settings.startPosition = [content.map.getCenter().lat, content.map.getCenter().lng]
-        }
-    }
-
-
-    var DivController = {
+    var ctrl = {
         updateIcon: function () {
             var markerIcon = L.divIcon(
                 {
@@ -124,24 +95,6 @@ var bikeSharing = function () {
             settings.startPosition = [content.map.getCenter().lat, content.map.getCenter().lng]
         }
     }
-
-
-    var ImgController= {
-        updateIcon: function () {
-            var markerIcon = L.Icon({
-                    iconUrl : "images/marker-icon.png"
-                });
-            this.marker = new L.marker([this.latitude, this.longitude],{/*icon: markerIcon,*/ opacity: 0.8});
-            if (content.map) {
-                this.marker.addTo(content.map);
-            }
-        },
-        onMoveEnd: function () {
-            settings.startPosition = [content.map.getCenter().lat, content.map.getCenter().lng]
-        }
-    }
-
-    var ctrl = DivController;
 
     //////////////////////////////////////////
     //          Helpers                     //
@@ -215,19 +168,6 @@ var bikeSharing = function () {
             }
         });
     };
-
-    Station.prototype.color = {
-        ok          : 'green',
-        ko          : 'black',
-        empty       : 'yellow',
-        almostEmpty : 'orange',
-        full        : 'red',
-        almostFull  : '#cb6d51'
-    };
-
-    Station.prototype.getColor = function () {
-        return this.color[this.availability];
-    }
 
     Station.prototype.getLatLng = function () {
         return new L.LatLng(this.latitude,this.longitude);
@@ -390,8 +330,6 @@ var bikeSharing = function () {
             }
         }
         var selector = document.getElementById("maxpoint").value = settings.maxMarker;
-        var selector = document.getElementById("canvas").value = settings.canvas;
-
     };
 
 
