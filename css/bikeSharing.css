@@ -121,7 +121,9 @@ div.buttons .controlIcon {
     font-size:  12pt;
 }
 
-
+.controlIcon-icon-map-marker.watching {
+  color:blue;
+}
 
 .geoloc {
     background-color: blue;

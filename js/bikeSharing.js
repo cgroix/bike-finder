@@ -257,6 +257,7 @@ var bikeSharing = function () {
     var addMyIcon = function (icone, action) {
         var div = document.createElement('div');
         div.classList.add('controlIcon');
+        div.classList.add('controlIcon-' + icone);
         div.addEventListener("click", action)
         var font = document.createElement('i');
         font.classList.add(icone);
@@ -264,7 +265,7 @@ var bikeSharing = function () {
         return div;
     };
 
-    var geoloc = function () {
+    var geoloc = function (icon) {
         var position = function (position) {
             content.geolocMarker.setLatLng([position.coords.latitude, position.coords.longitude]);
             content.geolocMarker.addTo(content.map);
@@ -278,10 +279,12 @@ var bikeSharing = function () {
             content.geoloc = false;
             content.geolocMarker.addTo(content.map);
             navigator.geolocation.clearWatch(content.geolocId);
+            this.classList.remove("watching");
         } else {
             content.geoloc = true;
             window.navigator.geolocation.getCurrentPosition(position);
             content.geolocId = window.navigator.geolocation.watchPosition(position);
+            this.classList.add("watching");
         }
     };
 
