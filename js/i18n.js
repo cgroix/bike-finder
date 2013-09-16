@@ -42,6 +42,21 @@ var Locale = function (loc) {
                         "en-US": "Contribute to this project at ",
                         "es"   : "Contribuye a este proyecto en "
                     },
+        "Paris" : {
+                        "fr"   : "Paris",
+                        "en-US": "Paris",
+                        "es"   : "París"
+                    },
+        "Nantes" : {
+                        "fr"   : "Nantes",
+                        "en-US": "Nantes",
+                        "es"   : "Nantes"
+                    },
+        "Valencia" : {
+                        "fr"   : "Valence (Espagne)",
+                        "en-US": "Valencia",
+                        "es"   : "Valencia"
+                    }
         };
 
     that.localize = function () {
