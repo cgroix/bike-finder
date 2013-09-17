@@ -1,7 +1,7 @@
 {
     "version"   :   1,
-    "name": "Bicloo",
-    "description": "Find your bike and your way without overrunnig your data plan! This app embed its map and data to be used in in offline mode, displaying a cty map and station location, but can also disply bike availabilty if you have connectivity. Oh, and it features geolocation too.",
+    "name": "Bike finder",
+    "description": "Find your bike and your way without wasting your data plan! This app embed its map and data to be used in in offline mode, displaying a city map and station location, but can also display bike availabilty if you have connectivity. Oh, and it features geolocation too.",
     "launch_path": "index.html",
     "developer": {
         "name": "Corentin Groix",
@@ -10,10 +10,10 @@
     "default_locale": "en-US",
     "locales": {
         "fr": {
-            "description": "Trouvez votre vélo."
+            "description": "Trouvez votre vélo sans épuiser votre forfait data! Cette appli embarque ses cartes et données, vous permettant de trouver les stations les plus proches, même en mode déconnecté, tout en vous permettant de voir les disponibilités si vous avez du réseau. Vous pouvez même utiliser la géolocalisation si vous êtes perdu."
         },
-        "it": {
-            "description": "Encentre su bici."
+        "es": {
+            "description": "Encuentre un bici sin agotar su contrato internet móvil. Esa applicacion integra su propia mapas, y funciona tambièn en modo desconectado."
         }
     },
     "permissions": {
@@ -21,9 +21,8 @@
           "description": "Required to get bike availability"
         },
         "geolocation": {
-          "description": "Required to geolocalisation feature"
+          "description": "Required to use geolocalisation feature"
         }
     },
-    "type": "privileged",
-    "orientation": ["portrait", "landscape"]
+    "type": "privileged"
 }
