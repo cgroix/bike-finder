@@ -14,11 +14,11 @@
 .settings {
     position:relative;
     float: right;
-    width: 40%;
+    width: 60%;
     background: #3B3235;
     height:100%;
     color:#C45810;
-    font-size: 12pt;
+    font-size: 14pt;
 }
 
 .settings .setting:first-child {
@@ -33,6 +33,7 @@
 .settings .setting .legend {
     margin-left: 5%;
     margin-right: 5%;
+    font-size: 14pt;
 }
 
 .settings .setting .input {
@@ -43,6 +44,7 @@
 
 .settings .setting .input .input{
     max-width: 90%;
+    font-size: 14pt;
 }
 
 
